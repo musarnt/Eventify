@@ -8,6 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,11 +23,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EventServiceTest {
 
-    // Mock repository — simulates DB behavior without real data
     @Mock
     private EventRepository eventRepository;
 
-    // Injects the mock into the service automatically
     @InjectMocks
     private EventService eventService;
 
@@ -31,7 +33,6 @@ class EventServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Base event reused across tests
         validEvent = Event.builder()
                 .id(1L)
                 .name("Jazz Concert")
@@ -46,11 +47,8 @@ class EventServiceTest {
 
         Event result = eventService.create(validEvent);
 
-        // Verifies the returned event is not null and has the correct name
         assertNotNull(result);
         assertEquals("Jazz Concert", result.getName());
-
-        // Verifies save was called exactly once
         verify(eventRepository, times(1)).save(validEvent);
     }
 
@@ -64,8 +62,6 @@ class EventServiceTest {
         );
 
         assertEquals("Event name cannot be empty", ex.getMessage());
-
-        // Verifies corrupted data never reaches the repository
         verify(eventRepository, never()).save(any());
     }
 
@@ -74,19 +70,22 @@ class EventServiceTest {
         validEvent.setName(null);
 
         assertThrows(IllegalArgumentException.class, () -> eventService.create(validEvent));
-
-        // Repository must not be called when validation fails
         verify(eventRepository, never()).save(any());
     }
 
     @Test
-    void findAll_returnsEventList() {
-        when(eventRepository.findAll()).thenReturn(List.of(validEvent));
+    void findAll_returnsEventPage() {
+        // Build a Pageable and stub the repository to return a Page wrapping our event
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Event> mockPage = new PageImpl<>(List.of(validEvent), pageable, 1);
+        when(eventRepository.findAll(pageable)).thenReturn(mockPage);
 
-        List<Event> result = eventService.findAll();
+        Page<Event> result = eventService.findAll(pageable);
 
-        // Verifies the list has exactly one element
-        assertEquals(1, result.size());
-        verify(eventRepository, times(1)).findAll();
+        // Validate page contents and metadata
+        assertEquals(1, result.getContent().size());
+        assertEquals(1L, result.getTotalElements());
+        assertEquals("Jazz Concert", result.getContent().get(0).getName());
+        verify(eventRepository, times(1)).findAll(pageable);
     }
 }

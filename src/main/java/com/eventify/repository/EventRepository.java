@@ -1,30 +1,21 @@
 package com.eventify.repository;
 
 import com.eventify.model.Event;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public class EventRepository {
+public interface EventRepository extends JpaRepository<Event, Long> {
 
-    // In-memory list simulating a database table
-    private final List<Event> events = new ArrayList<>();
+    // Case-insensitive partial match on the event name
+    List<Event> findByNameContainingIgnoreCase(String name);
 
-    public Event save(Event event) {
-        events.add(event);
-        return event;
-    }
+    // Useful for upcoming-events queries
+    List<Event> findByDateAfter(LocalDate date);
 
-    public List<Event> findAll() {
-        return events;
-    }
-
-    public Optional<Event> findById(Long id) {
-        return events.stream()
-                .filter(e -> e.getId().equals(id))
-                .findFirst();
-    }
+    // Useful for filtering events in a given range
+    List<Event> findByDateBetween(LocalDate start, LocalDate end);
 }

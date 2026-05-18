@@ -8,6 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -18,11 +22,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class VenueServiceTest {
 
-    // Mock repository — simulates DB behavior without real data
     @Mock
     private VenueRepository venueRepository;
 
-    // Injects the mock into the service automatically
     @InjectMocks
     private VenueService venueService;
 
@@ -30,7 +32,6 @@ class VenueServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Base venue reused across tests
         validVenue = Venue.builder()
                 .id(1L)
                 .name("Metropolitan Theater")
@@ -45,11 +46,8 @@ class VenueServiceTest {
 
         Venue result = venueService.create(validVenue);
 
-        // Verifies the returned venue is not null and has the correct name
         assertNotNull(result);
         assertEquals("Metropolitan Theater", result.getName());
-
-        // Verifies save was called exactly once
         verify(venueRepository, times(1)).save(validVenue);
     }
 
@@ -63,8 +61,6 @@ class VenueServiceTest {
         );
 
         assertEquals("Venue name cannot be empty", ex.getMessage());
-
-        // Verifies corrupted data never reaches the repository
         verify(venueRepository, never()).save(any());
     }
 
@@ -73,19 +69,20 @@ class VenueServiceTest {
         validVenue.setName(null);
 
         assertThrows(IllegalArgumentException.class, () -> venueService.create(validVenue));
-
-        // Repository must not be called when validation fails
         verify(venueRepository, never()).save(any());
     }
 
     @Test
-    void findAll_returnsVenueList() {
-        when(venueRepository.findAll()).thenReturn(List.of(validVenue));
+    void findAll_returnsVenuePage() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Venue> mockPage = new PageImpl<>(List.of(validVenue), pageable, 1);
+        when(venueRepository.findAll(pageable)).thenReturn(mockPage);
 
-        List<Venue> result = venueService.findAll();
+        Page<Venue> result = venueService.findAll(pageable);
 
-        // Verifies the list has exactly one element
-        assertEquals(1, result.size());
-        verify(venueRepository, times(1)).findAll();
+        assertEquals(1, result.getContent().size());
+        assertEquals(1L, result.getTotalElements());
+        assertEquals("Metropolitan Theater", result.getContent().get(0).getName());
+        verify(venueRepository, times(1)).findAll(pageable);
     }
 }

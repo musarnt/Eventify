@@ -1,30 +1,17 @@
 package com.eventify.repository;
 
 import com.eventify.model.Venue;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public class VenueRepository {
+public interface VenueRepository extends JpaRepository<Venue, Long> {
 
-    // In-memory list simulating a database table
-    private final List<Venue> venues = new ArrayList<>();
+    // Case-insensitive partial match on the venue name
+    List<Venue> findByNameContainingIgnoreCase(String name);
 
-    public Venue save(Venue venue) {
-        venues.add(venue);
-        return venue;
-    }
-
-    public List<Venue> findAll() {
-        return venues;
-    }
-
-    public Optional<Venue> findById(Long id) {
-        return venues.stream()
-                .filter(v -> v.getId().equals(id))
-                .findFirst();
-    }
+    // Filter venues that can hold at least a given audience size
+    List<Venue> findByCapacityGreaterThanEqual(Integer minCapacity);
 }
