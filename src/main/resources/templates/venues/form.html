@@ -4,6 +4,8 @@
 
     <h2 th:text="${venue.id != null} ? 'Edit Venue' : 'New Venue'">Venue Form</h2>
 
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
     <form th:action="@{/admin/venues/save}" th:object="${venue}" method="post">
         <input type="hidden" th:field="*{id}">
 

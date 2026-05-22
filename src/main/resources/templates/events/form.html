@@ -4,6 +4,8 @@
 
     <h2 th:text="${event.id != null} ? 'Edit Event' : 'New Event'">Event Form</h2>
 
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
     <form th:action="@{/admin/events/save}" th:object="${event}" method="post">
         <!-- Hidden field for edit mode: carries the existing ID -->
         <input type="hidden" th:field="*{id}">
