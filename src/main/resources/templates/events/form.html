@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="content">
+
+    <h2 th:text="${event.id != null} ? 'Edit Event' : 'New Event'">Event Form</h2>
+
+    <form th:action="@{/admin/events/save}" th:object="${event}" method="post">
+        <!-- Hidden field for edit mode: carries the existing ID -->
+        <input type="hidden" th:field="*{id}">
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name"
+                   th:field="*{name}" required maxlength="150">
+        </div>
+
+        <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" class="form-control" id="date"
+                   th:field="*{date}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description"
+                      th:field="*{description}" rows="3" maxlength="1000"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">Save</button>
+        <a th:href="@{/admin/events}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+</div>
+</html>
