@@ -1,42 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="content">
+<div th:fragment="content" class="container">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Venues</h2>
-        <a th:href="@{/admin/venues/new}" class="btn btn-primary">+ New Venue</a>
+    <div class="page-header">
+        <h2 class="page-title">Venues</h2>
+        <a th:href="@{/admin/venues/new}" class="btn btn-accent">+ New Venue</a>
     </div>
 
-    <div th:if="${venues.isEmpty()}" class="alert alert-info">
-        No venues found. Create one to get started!
+    <div th:if="${venues.isEmpty()}" class="empty-state">
+        No venues yet. Create your first one.
     </div>
 
-    <table th:unless="${venues.isEmpty()}" class="table table-striped">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Address</th>
-            <th>Capacity</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="venue : ${venues}">
-            <td th:text="${venue.id}"></td>
-            <td th:text="${venue.name}"></td>
-            <td th:text="${venue.address}"></td>
-            <td th:text="${venue.capacity}"></td>
-            <td>
-                <a th:href="@{/admin/venues/edit/{id}(id=${venue.id})}"
-                   class="btn btn-sm btn-warning">Edit</a>
-                <a th:href="@{/admin/venues/delete/{id}(id=${venue.id})}"
-                   class="btn btn-sm btn-danger"
-                   onclick="return confirm('Are you sure?')">Delete</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div th:unless="${venues.isEmpty()}" class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Capacity</th>
+                <th style="text-align:center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="venue : ${venues}">
+                <td th:text="${venue.id}"></td>
+                <td class="td-name" th:text="${venue.name}"></td>
+                <td th:text="${venue.address}"></td>
+                <td th:text="${venue.capacity}"></td>
+                <td class="td-actions">
+                    <a th:href="@{/admin/venues/edit/{id}(id=${venue.id})}" class="btn btn-edit">Edit</a>
+                    <a th:href="@{/admin/venues/delete/{id}(id=${venue.id})}" class="btn btn-delete"
+                       onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
 </div>
 </html>
