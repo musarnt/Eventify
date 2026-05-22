@@ -44,13 +44,13 @@ public class DataSeeder {
             if (eventRepository.count() == 0) {
                 eventService.create(Event.builder()
                         .name("Symphonic Concert")
-                        .date(LocalDate.of(2025, 8, 15))
+                        .date(LocalDate.of(2026, 8, 15))
                         .description("A classical music night at the Metropolitan Theater")
                         .build());
 
                 eventService.create(Event.builder()
                         .name("Tech Fair")
-                        .date(LocalDate.of(2025, 9, 20))
+                        .date(LocalDate.of(2026, 9, 20))
                         .description("Innovation and startups exhibition")
                         .build());
 
