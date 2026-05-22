@@ -36,7 +36,7 @@ class EventServiceTest {
         validEvent = Event.builder()
                 .id(1L)
                 .name("Jazz Concert")
-                .date(LocalDate.of(2025, 10, 10))
+                .date(LocalDate.of(2026, 10, 10))
                 .description("A live jazz night")
                 .build();
     }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Service
 public class EventService {
@@ -22,6 +22,7 @@ public class EventService {
         // Defensive: ID must be assigned by the database, never by the client
         event.setId(null);
         validateName(event.getName());
+        validateDate(event.getDate());
         return eventRepository.save(event);
     }
 
@@ -38,6 +39,7 @@ public class EventService {
         // Reuses findById so the 404 logic stays in one place
         Event existing = findById(id);
         validateName(updated.getName());
+        validateDate(updated.getDate());
         existing.setName(updated.getName());
         existing.setDate(updated.getDate());
         existing.setDescription(updated.getDescription());
@@ -54,6 +56,15 @@ public class EventService {
     private void validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Event name cannot be empty");
+        }
+    }
+
+    private void validateDate(LocalDate date) {
+        if (date == null) {
+            throw new IllegalArgumentException("Event date cannot be null");
+        }
+        if (date.isBefore(LocalDate.of(2026, 1, 1))) {
+            throw new IllegalArgumentException("Event date cannot be before 2026");
         }
     }
 }

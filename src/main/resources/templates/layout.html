@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'Eventify Admin'">Eventify Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="nav">
+    <a th:href="@{/admin/events}" class="nav-brand">Eventify</a>
+    <div class="nav-links">
+        <a th:href="@{/admin/events}" class="nav-link">Events</a>
+        <a th:href="@{/admin/venues}" class="nav-link">Venues</a>
+    </div>
+</nav>
+
+<div class="container" th:replace="~{${view} :: content}"></div>
+
+</body>
+</html>
