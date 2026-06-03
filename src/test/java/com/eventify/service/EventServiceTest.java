@@ -9,10 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -86,17 +86,16 @@ class EventServiceTest {
     }
 
     @Test
-    void findAll_returnsEventPage() {
+    void findAll_returnsEventSlice() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Event> mockPage = new PageImpl<>(List.of(validEvent), pageable, 1);
-        when(eventRepository.findAll(pageable)).thenReturn(mockPage);
+        Slice<Event> mockSlice = new SliceImpl<>(List.of(validEvent), pageable, false);
+        when(eventRepository.findAllBy(pageable)).thenReturn(mockSlice);
 
-        Page<Event> result = eventService.findAll(pageable);
+        Slice<Event> result = eventService.findAll(pageable);
 
         assertEquals(1, result.getContent().size());
-        assertEquals(1L, result.getTotalElements());
         assertEquals("Jazz Concert", result.getContent().get(0).getName());
-        verify(eventRepository, times(1)).findAll(pageable);
+        verify(eventRepository, times(1)).findAllBy(pageable);
     }
 
     @Test

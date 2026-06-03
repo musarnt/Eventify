@@ -8,9 +8,10 @@ import com.eventify.service.VenueService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -54,8 +55,8 @@ class EventViewControllerTest {
                 .description("A test event")
                 .venue(venue)
                 .build();
-        Page<Event> page = new PageImpl<>(List.of(event));
-        when(eventService.findAll(any(Pageable.class))).thenReturn(page);
+        Slice<Event> slice = new SliceImpl<>(List.of(event));
+        when(eventService.findAll(any(Pageable.class))).thenReturn(slice);
 
         mockMvc.perform(get("/admin/events"))
                 .andExpect(status().isOk())

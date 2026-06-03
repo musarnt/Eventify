@@ -1,10 +1,11 @@
 package com.eventify.service;
 
+import com.eventify.dto.EventSummaryDTO;
 import com.eventify.exception.ResourceNotFoundException;
 import com.eventify.model.Event;
 import com.eventify.repository.EventRepository;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +29,8 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public Page<Event> findAll(Pageable pageable) {
-        return eventRepository.findAll(pageable);
+    public Slice<Event> findAll(Pageable pageable) {
+        return eventRepository.findAllBy(pageable);
     }
 
     public Event findById(Long id) {
@@ -55,6 +56,28 @@ public class EventService {
         Event event = findById(id);
         event.deactivate();
         eventRepository.save(event);
+    }
+
+    // --- DTO projections for API ---
+
+    public Slice<EventSummaryDTO> findAllSummaries(Pageable pageable) {
+        return eventRepository.findAllSummaries(pageable);
+    }
+
+    public Slice<EventSummaryDTO> findSummariesByCity(String city, Pageable pageable) {
+        return eventRepository.findSummariesByCity(city, pageable);
+    }
+
+    public Slice<EventSummaryDTO> findSummariesByCategoryName(String category, Pageable pageable) {
+        return eventRepository.findSummariesByCategoryName(category, pageable);
+    }
+
+    public Slice<EventSummaryDTO> findSummariesByDateBetween(LocalDate start, LocalDate end, Pageable pageable) {
+        return eventRepository.findSummariesByDateBetween(start, end, pageable);
+    }
+
+    public Slice<EventSummaryDTO> findSummariesByMinCapacity(Integer minCapacity, Pageable pageable) {
+        return eventRepository.findSummariesByMinCapacity(minCapacity, pageable);
     }
 
     private void validateName(String name) {
