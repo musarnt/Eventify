@@ -82,9 +82,9 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete event", description = "Removes an event by its identifier")
+    @Operation(summary = "Deactivate event", description = "Soft-deletes an event by marking it as inactive")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Event deleted successfully"),
+            @ApiResponse(responseCode = "204", description = "Event deactivated successfully"),
             @ApiResponse(responseCode = "404", description = "Event not found")
     })
     public ResponseEntity<Void> delete(@PathVariable Long id) {

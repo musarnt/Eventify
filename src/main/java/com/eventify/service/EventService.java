@@ -3,9 +3,10 @@ package com.eventify.service;
 import com.eventify.exception.ResourceNotFoundException;
 import com.eventify.model.Event;
 import com.eventify.repository.EventRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -18,9 +19,10 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
+    @Transactional
     public Event create(Event event) {
-        // Defensive: ID must be assigned by the database, never by the client
         event.setId(null);
+        event.setActive(true);
         validateName(event.getName());
         validateDate(event.getDate());
         return eventRepository.save(event);
@@ -35,22 +37,24 @@ public class EventService {
                 .orElseThrow(() -> new ResourceNotFoundException("Event", id));
     }
 
+    @Transactional
     public Event update(Long id, Event updated) {
-        // Reuses findById so the 404 logic stays in one place
         Event existing = findById(id);
         validateName(updated.getName());
         validateDate(updated.getDate());
         existing.setName(updated.getName());
         existing.setDate(updated.getDate());
         existing.setDescription(updated.getDescription());
+        existing.setVenue(updated.getVenue());
+        existing.setCategories(updated.getCategories());
         return eventRepository.save(existing);
     }
 
+    @Transactional
     public void delete(Long id) {
-        if (!eventRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Event", id);
-        }
-        eventRepository.deleteById(id);
+        Event event = findById(id);
+        event.deactivate();
+        eventRepository.save(event);
     }
 
     private void validateName(String name) {

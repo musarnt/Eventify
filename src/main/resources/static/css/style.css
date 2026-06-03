@@ -205,6 +205,34 @@ textarea.form-input { resize: vertical; }
     margin-top: 1.5rem;
 }
 
+/* Checkbox group */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.35rem 0.7rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: border-color 0.2s;
+}
+.checkbox-label:hover { border-color: var(--accent); }
+.checkbox-label input[type="checkbox"] { accent-color: var(--accent); }
+
+/* Select dropdown */
+select.form-input {
+    appearance: auto;
+    cursor: pointer;
+}
+
 /* Error alert */
 .alert-error {
     background: rgba(217, 79, 79, 0.1);

@@ -14,29 +14,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "venues")
+@Table(name = "categories")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Venue {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = 100, unique = true)
     private String name;
 
-    @Column(nullable = false, length = 255)
-    private String address;
-
-    @Column(nullable = false, length = 100)
-    private String city;
-
-    @Column(nullable = false)
-    private Integer capacity;
+    @Column(length = 500)
+    private String description;
 }

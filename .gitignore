@@ -34,3 +34,6 @@ build/
 
 # H2 local database
 /data/
+
+### Claude Code ###
+.claude/

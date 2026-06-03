@@ -1,6 +1,7 @@
 package com.eventify.service;
 
 import com.eventify.model.Event;
+import com.eventify.model.Venue;
 import com.eventify.repository.EventRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,11 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-// Runs tests without loading the Spring context
 @ExtendWith(MockitoExtension.class)
 class EventServiceTest {
 
@@ -30,14 +31,24 @@ class EventServiceTest {
     private EventService eventService;
 
     private Event validEvent;
+    private Venue venue;
 
     @BeforeEach
     void setUp() {
+        venue = Venue.builder()
+                .id(1L)
+                .name("Metropolitan Theater")
+                .address("Street 41 #57-30")
+                .city("Medellin")
+                .capacity(1200)
+                .build();
+
         validEvent = Event.builder()
                 .id(1L)
                 .name("Jazz Concert")
                 .date(LocalDate.of(2026, 10, 10))
                 .description("A live jazz night")
+                .venue(venue)
                 .build();
     }
 
@@ -49,6 +60,7 @@ class EventServiceTest {
 
         assertNotNull(result);
         assertEquals("Jazz Concert", result.getName());
+        assertTrue(result.isActive());
         verify(eventRepository, times(1)).save(validEvent);
     }
 
@@ -75,17 +87,27 @@ class EventServiceTest {
 
     @Test
     void findAll_returnsEventPage() {
-        // Build a Pageable and stub the repository to return a Page wrapping our event
         Pageable pageable = PageRequest.of(0, 10);
         Page<Event> mockPage = new PageImpl<>(List.of(validEvent), pageable, 1);
         when(eventRepository.findAll(pageable)).thenReturn(mockPage);
 
         Page<Event> result = eventService.findAll(pageable);
 
-        // Validate page contents and metadata
         assertEquals(1, result.getContent().size());
         assertEquals(1L, result.getTotalElements());
         assertEquals("Jazz Concert", result.getContent().get(0).getName());
         verify(eventRepository, times(1)).findAll(pageable);
+    }
+
+    @Test
+    void delete_softDeletesEvent() {
+        when(eventRepository.findById(1L)).thenReturn(Optional.of(validEvent));
+        when(eventRepository.save(validEvent)).thenReturn(validEvent);
+
+        eventService.delete(1L);
+
+        assertFalse(validEvent.isActive());
+        verify(eventRepository, times(1)).save(validEvent);
+        verify(eventRepository, never()).deleteById(any());
     }
 }

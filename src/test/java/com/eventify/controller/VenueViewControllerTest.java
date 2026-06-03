@@ -33,6 +33,7 @@ class VenueViewControllerTest {
                 .id(1L)
                 .name("Test Venue")
                 .address("123 Main St")
+                .city("Test City")
                 .capacity(500)
                 .build();
         Page<Venue> page = new PageImpl<>(List.of(venue));
@@ -59,6 +60,7 @@ class VenueViewControllerTest {
                 .id(1L)
                 .name("Existing Venue")
                 .address("456 Oak Ave")
+                .city("Test City")
                 .capacity(300)
                 .build();
         when(venueService.findById(1L)).thenReturn(venue);

@@ -35,7 +35,8 @@ class VenueServiceTest {
         validVenue = Venue.builder()
                 .id(1L)
                 .name("Metropolitan Theater")
-                .address("Street 41 #57-30, Medellin")
+                .address("Street 41 #57-30")
+                .city("Medellin")
                 .capacity(1200)
                 .build();
     }

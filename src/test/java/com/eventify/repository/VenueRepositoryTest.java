@@ -29,7 +29,8 @@ class VenueRepositoryTest {
     void shouldPersistVenueAndGenerateId() {
         Venue venue = Venue.builder()
                 .name("Metropolitan Theater")
-                .address("Street 41 #57-30, Medellin")
+                .address("Street 41 #57-30")
+                .city("Medellin")
                 .capacity(1200)
                 .build();
 
@@ -37,14 +38,15 @@ class VenueRepositoryTest {
 
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getName()).isEqualTo("Metropolitan Theater");
+        assertThat(saved.getCity()).isEqualTo("Medellin");
     }
 
     @Test
     void shouldFindByNameContainingIgnoreCase() {
         venueRepository.save(Venue.builder()
-                .name("Metropolitan Theater").address("addr").capacity(1000).build());
+                .name("Metropolitan Theater").address("addr").city("Medellin").capacity(1000).build());
         venueRepository.save(Venue.builder()
-                .name("Parque Explora").address("addr").capacity(500).build());
+                .name("Parque Explora").address("addr").city("Medellin").capacity(500).build());
 
         List<Venue> results = venueRepository.findByNameContainingIgnoreCase("metro");
 
@@ -55,9 +57,9 @@ class VenueRepositoryTest {
     @Test
     void shouldFindByCapacityGreaterThanEqual() {
         venueRepository.save(Venue.builder()
-                .name("Small Hall").address("addr").capacity(100).build());
+                .name("Small Hall").address("addr").city("Bogota").capacity(100).build());
         venueRepository.save(Venue.builder()
-                .name("Big Arena").address("addr").capacity(5000).build());
+                .name("Big Arena").address("addr").city("Medellin").capacity(5000).build());
 
         List<Venue> large = venueRepository.findByCapacityGreaterThanEqual(1000);
 
@@ -68,11 +70,11 @@ class VenueRepositoryTest {
     @Test
     void shouldPaginateAndSortByCapacityDesc() {
         venueRepository.save(Venue.builder()
-                .name("V1").address("addr").capacity(100).build());
+                .name("V1").address("addr").city("Cali").capacity(100).build());
         venueRepository.save(Venue.builder()
-                .name("V2").address("addr").capacity(500).build());
+                .name("V2").address("addr").city("Cali").capacity(500).build());
         venueRepository.save(Venue.builder()
-                .name("V3").address("addr").capacity(300).build());
+                .name("V3").address("addr").city("Cali").capacity(300).build());
 
         Pageable firstPage = PageRequest.of(0, 2, Sort.by("capacity").descending());
         Page<Venue> page = venueRepository.findAll(firstPage);

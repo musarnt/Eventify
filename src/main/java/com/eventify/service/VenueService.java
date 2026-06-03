@@ -40,6 +40,7 @@ public class VenueService {
         validateName(updated.getName());
         existing.setName(updated.getName());
         existing.setAddress(updated.getAddress());
+        existing.setCity(updated.getCity());
         existing.setCapacity(updated.getCapacity());
         return venueRepository.save(existing);
     }

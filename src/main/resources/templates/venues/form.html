@@ -22,6 +22,11 @@
             </div>
 
             <div class="form-group">
+                <label for="city" class="form-label">City</label>
+                <input type="text" id="city" th:field="*{city}" required maxlength="100" class="form-input">
+            </div>
+
+            <div class="form-group">
                 <label for="capacity" class="form-label">Capacity</label>
                 <input type="number" id="capacity" th:field="*{capacity}" required min="1" class="form-input">
             </div>
