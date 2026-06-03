@@ -233,6 +233,33 @@ select.form-input {
     cursor: pointer;
 }
 
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+}
+.page-indicator {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.btn-disabled {
+    display: inline-block;
+    padding: 0.35rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 /* Error alert */
 .alert-error {
     background: rgba(217, 79, 79, 0.1);

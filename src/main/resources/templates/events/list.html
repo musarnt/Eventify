@@ -45,5 +45,19 @@
         </table>
     </div>
 
+    <div class="pagination" th:if="${slice != null}">
+        <a th:if="${slice.hasPrevious()}"
+           th:href="@{/admin/events(page=${slice.number - 1}, size=${slice.size})}"
+           class="btn btn-edit">Previous</a>
+        <span th:if="${!slice.hasPrevious()}" class="btn btn-disabled">Previous</span>
+
+        <span class="page-indicator" th:text="'Page ' + (${slice.number} + 1)"></span>
+
+        <a th:if="${slice.hasNext()}"
+           th:href="@{/admin/events(page=${slice.number + 1}, size=${slice.size})}"
+           class="btn btn-edit">Next</a>
+        <span th:if="${!slice.hasNext()}" class="btn btn-disabled">Next</span>
+    </div>
+
 </div>
 </html>

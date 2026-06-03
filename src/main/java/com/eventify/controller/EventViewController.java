@@ -5,6 +5,7 @@ import com.eventify.service.CategoryService;
 import com.eventify.service.EventService;
 import com.eventify.service.VenueService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -36,9 +37,11 @@ public class EventViewController {
     }
 
     @GetMapping
-    public String list(@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
+    public String list(@PageableDefault(size = 20, sort = "date", direction = Sort.Direction.DESC) Pageable pageable,
                        Model model) {
-        model.addAttribute("events", eventService.findAll(pageable).getContent());
+        Slice<Event> slice = eventService.findAll(pageable);
+        model.addAttribute("events", slice.getContent());
+        model.addAttribute("slice", slice);
         model.addAttribute("view", "events/list");
         model.addAttribute("pageTitle", "Events - Eventify");
         return "layout";

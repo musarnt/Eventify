@@ -3,36 +3,32 @@
 <div th:fragment="content" class="container">
 
     <div class="page-header">
-        <h2 class="page-title">Venues</h2>
-        <a th:href="@{/admin/venues/new}" class="btn btn-accent">+ New Venue</a>
+        <h2 class="page-title">Categories</h2>
+        <a th:href="@{/admin/categories/new}" class="btn btn-accent">+ New Category</a>
     </div>
 
-    <div th:if="${venues.isEmpty()}" class="empty-state">
-        No venues yet. Create your first one.
+    <div th:if="${categories.isEmpty()}" class="empty-state">
+        No categories yet. Create your first one.
     </div>
 
-    <div th:unless="${venues.isEmpty()}" class="table-wrapper">
+    <div th:unless="${categories.isEmpty()}" class="table-wrapper">
         <table>
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Address</th>
-                <th>City</th>
-                <th>Capacity</th>
+                <th>Description</th>
                 <th style="text-align:center">Actions</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="venue : ${venues}">
-                <td th:text="${venue.id}"></td>
-                <td class="td-name" th:text="${venue.name}"></td>
-                <td th:text="${venue.address}"></td>
-                <td th:text="${venue.city}"></td>
-                <td th:text="${venue.capacity}"></td>
+            <tr th:each="cat : ${categories}">
+                <td th:text="${cat.id}"></td>
+                <td class="td-name" th:text="${cat.name}"></td>
+                <td class="td-desc" th:text="${cat.description}"></td>
                 <td class="td-actions">
-                    <a th:href="@{/admin/venues/edit/{id}(id=${venue.id})}" class="btn btn-edit">Edit</a>
-                    <a th:href="@{/admin/venues/delete/{id}(id=${venue.id})}" class="btn btn-delete"
+                    <a th:href="@{/admin/categories/edit/{id}(id=${cat.id})}" class="btn btn-edit">Edit</a>
+                    <a th:href="@{/admin/categories/delete/{id}(id=${cat.id})}" class="btn btn-delete"
                        onclick="return confirm('Are you sure?')">Delete</a>
                 </td>
             </tr>
@@ -42,14 +38,14 @@
 
     <div class="pagination" th:if="${slice != null}">
         <a th:if="${slice.hasPrevious()}"
-           th:href="@{/admin/venues(page=${slice.number - 1}, size=${slice.size})}"
+           th:href="@{/admin/categories(page=${slice.number - 1}, size=${slice.size})}"
            class="btn btn-edit">Previous</a>
         <span th:if="${!slice.hasPrevious()}" class="btn btn-disabled">Previous</span>
 
         <span class="page-indicator" th:text="'Page ' + (${slice.number} + 1)"></span>
 
         <a th:if="${slice.hasNext()}"
-           th:href="@{/admin/venues(page=${slice.number + 1}, size=${slice.size})}"
+           th:href="@{/admin/categories(page=${slice.number + 1}, size=${slice.size})}"
            class="btn btn-edit">Next</a>
         <span th:if="${!slice.hasNext()}" class="btn btn-disabled">Next</span>
     </div>
