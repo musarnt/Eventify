@@ -7,8 +7,17 @@
         <a th:href="@{/admin/events/new}" class="btn btn-accent">+ New Event</a>
     </div>
 
+    <form th:action="@{/admin/events}" method="get" class="filter-bar">
+        <input type="text" name="city" th:value="${filterCity}"
+               placeholder="Filter by city (partial)" class="form-input filter-input">
+        <input type="text" name="category" th:value="${filterCategory}"
+               placeholder="Filter by category (partial)" class="form-input filter-input">
+        <button type="submit" class="btn btn-accent">Search</button>
+        <a th:href="@{/admin/events}" class="btn btn-cancel">Clear</a>
+    </form>
+
     <div th:if="${events.isEmpty()}" class="empty-state">
-        No events yet. Create your first one.
+        No events match the current filters.
     </div>
 
     <div th:unless="${events.isEmpty()}" class="table-wrapper">
@@ -19,8 +28,8 @@
                 <th>Name</th>
                 <th>Date</th>
                 <th>Venue</th>
+                <th>City</th>
                 <th>Categories</th>
-                <th>Description</th>
                 <th style="text-align:center">Actions</th>
             </tr>
             </thead>
@@ -30,11 +39,11 @@
                 <td class="td-name" th:text="${event.name}"></td>
                 <td th:text="${event.date}"></td>
                 <td th:text="${event.venue.name}"></td>
+                <td th:text="${event.venue.city}"></td>
                 <td class="td-desc">
                     <span th:each="cat, iter : ${event.categories}"
                           th:text="${cat.name + (iter.last ? '' : ', ')}"></span>
                 </td>
-                <td class="td-desc" th:text="${event.description}"></td>
                 <td class="td-actions">
                     <a th:href="@{/admin/events/edit/{id}(id=${event.id})}" class="btn btn-edit">Edit</a>
                     <a th:href="@{/admin/events/delete/{id}(id=${event.id})}" class="btn btn-delete"
@@ -45,16 +54,17 @@
         </table>
     </div>
 
+    <!-- Pagination keeps active filters in the URL so context persists across pages -->
     <div class="pagination" th:if="${slice != null}">
         <a th:if="${slice.hasPrevious()}"
-           th:href="@{/admin/events(page=${slice.number - 1}, size=${slice.size})}"
+           th:href="@{/admin/events(page=${slice.number - 1}, size=${slice.size}, city=${filterCity}, category=${filterCategory})}"
            class="btn btn-edit">Previous</a>
         <span th:if="${!slice.hasPrevious()}" class="btn btn-disabled">Previous</span>
 
         <span class="page-indicator" th:text="'Page ' + (${slice.number} + 1)"></span>
 
         <a th:if="${slice.hasNext()}"
-           th:href="@{/admin/events(page=${slice.number + 1}, size=${slice.size})}"
+           th:href="@{/admin/events(page=${slice.number + 1}, size=${slice.size}, city=${filterCity}, category=${filterCategory})}"
            class="btn btn-edit">Next</a>
         <span th:if="${!slice.hasNext()}" class="btn btn-disabled">Next</span>
     </div>

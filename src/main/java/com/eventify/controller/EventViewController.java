@@ -37,11 +37,15 @@ public class EventViewController {
     }
 
     @GetMapping
-    public String list(@PageableDefault(size = 20, sort = "date", direction = Sort.Direction.DESC) Pageable pageable,
+    public String list(@RequestParam(required = false) String city,
+                       @RequestParam(required = false) String category,
+                       @PageableDefault(size = 20, sort = "date", direction = Sort.Direction.DESC) Pageable pageable,
                        Model model) {
-        Slice<Event> slice = eventService.findAll(pageable);
+        Slice<Event> slice = eventService.search(city, category, pageable);
         model.addAttribute("events", slice.getContent());
         model.addAttribute("slice", slice);
+        model.addAttribute("filterCity", city);
+        model.addAttribute("filterCategory", category);
         model.addAttribute("view", "events/list");
         model.addAttribute("pageTitle", "Events - Eventify");
         return "layout";

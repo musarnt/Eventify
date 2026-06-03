@@ -17,27 +17,43 @@ import java.util.Optional;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    // --- Full entity queries (admin panel, eager-loaded) ---
+    // --- Full entity queries (admin panel) ---
+    // We JOIN FETCH only the ToOne side (venue) in the paginated query so SQL pagination
+    // stays in the DB. Categories load via @BatchSize on the entity: a single follow-up
+    // "WHERE event_id IN (?, ?, ...)" query — no N+1, no in-memory pagination.
 
-    @EntityGraph(attributePaths = {"venue", "categories"})
+    @EntityGraph(attributePaths = {"venue"})
     Slice<Event> findAllBy(Pageable pageable);
 
+    // Partial, case-insensitive search by city and category for the admin panel.
+    @Query(value = "SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.venue v LEFT JOIN e.categories c " +
+                   "WHERE (:city IS NULL OR LOWER(v.city) LIKE LOWER(CONCAT('%', :city, '%'))) " +
+                   "AND (:category IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :category, '%')))",
+           countQuery = "SELECT COUNT(DISTINCT e) FROM Event e LEFT JOIN e.venue v LEFT JOIN e.categories c " +
+                        "WHERE (:city IS NULL OR LOWER(v.city) LIKE LOWER(CONCAT('%', :city, '%'))) " +
+                        "AND (:category IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :category, '%')))")
+    Slice<Event> searchAll(@Param("city") String city,
+                           @Param("category") String category,
+                           Pageable pageable);
+
+    // Single-entity lookups fetch everything (venue + categories) since there is no pagination.
     @Override
     @EntityGraph(attributePaths = {"venue", "categories"})
     Optional<Event> findById(Long id);
 
     // --- DTO projections (API listings, lightweight) ---
+    // Each query uses LIKE for partial matching and LOWER for case-insensitivity.
 
     @Query("SELECT new com.eventify.dto.EventSummaryDTO(e.id, e.name, e.date, e.venue.name, e.venue.city) " +
            "FROM Event e")
     Slice<EventSummaryDTO> findAllSummaries(Pageable pageable);
 
     @Query("SELECT new com.eventify.dto.EventSummaryDTO(e.id, e.name, e.date, e.venue.name, e.venue.city) " +
-           "FROM Event e WHERE LOWER(e.venue.city) = LOWER(:city)")
+           "FROM Event e WHERE LOWER(e.venue.city) LIKE LOWER(CONCAT('%', :city, '%'))")
     Slice<EventSummaryDTO> findSummariesByCity(@Param("city") String city, Pageable pageable);
 
-    @Query("SELECT new com.eventify.dto.EventSummaryDTO(e.id, e.name, e.date, e.venue.name, e.venue.city) " +
-           "FROM Event e JOIN e.categories c WHERE LOWER(c.name) = LOWER(:category)")
+    @Query("SELECT DISTINCT new com.eventify.dto.EventSummaryDTO(e.id, e.name, e.date, e.venue.name, e.venue.city) " +
+           "FROM Event e JOIN e.categories c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :category, '%'))")
     Slice<EventSummaryDTO> findSummariesByCategoryName(@Param("category") String category, Pageable pageable);
 
     @Query("SELECT new com.eventify.dto.EventSummaryDTO(e.id, e.name, e.date, e.venue.name, e.venue.city) " +

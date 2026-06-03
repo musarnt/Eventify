@@ -56,7 +56,7 @@ class EventViewControllerTest {
                 .venue(venue)
                 .build();
         Slice<Event> slice = new SliceImpl<>(List.of(event));
-        when(eventService.findAll(any(Pageable.class))).thenReturn(slice);
+        when(eventService.search(any(), any(), any(Pageable.class))).thenReturn(slice);
 
         mockMvc.perform(get("/admin/events"))
                 .andExpect(status().isOk())

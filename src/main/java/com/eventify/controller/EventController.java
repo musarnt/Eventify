@@ -62,9 +62,9 @@ public class EventController {
             @ApiResponse(responseCode = "204", description = "No events match the criteria")
     })
     public ResponseEntity<Slice<EventSummaryDTO>> findSummaries(
-            @Parameter(description = "Filter by venue city (case-insensitive)")
+            @Parameter(description = "Filter by venue city (partial, case-insensitive — e.g. 'bog' matches 'Bogota')")
             @RequestParam(required = false) String city,
-            @Parameter(description = "Filter by category name (case-insensitive)")
+            @Parameter(description = "Filter by category name (partial, case-insensitive — e.g. 'conc' matches 'Concerts')")
             @RequestParam(required = false) String category,
             @Parameter(description = "Filter start date (inclusive, ISO format)")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,

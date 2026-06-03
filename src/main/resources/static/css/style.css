@@ -233,6 +233,19 @@ select.form-input {
     cursor: pointer;
 }
 
+/* Filter bar */
+.filter-bar {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+.filter-input {
+    flex: 1;
+    min-width: 200px;
+}
+
 /* Pagination */
 .pagination {
     display: flex;

@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
@@ -49,9 +50,11 @@ public class Event {
     @Column(length = 1000)
     private String description;
 
+    // Boolean wrapper (not primitive) so JSON payloads without the field deserialize cleanly;
+    // the service forces true on create.
     @Builder.Default
     @Column(nullable = false)
-    private boolean active = true;
+    private Boolean active = true;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "venue_id", nullable = false)
@@ -63,10 +66,15 @@ public class Event {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
+    @BatchSize(size = 50)
     @Builder.Default
     private Set<Category> categories = new HashSet<>();
 
     public void deactivate() {
         this.active = false;
+    }
+
+    public boolean isActive() {
+        return Boolean.TRUE.equals(active);
     }
 }

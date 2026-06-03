@@ -33,6 +33,16 @@ public class EventService {
         return eventRepository.findAllBy(pageable);
     }
 
+    // Partial, case-insensitive search by city and/or category. Either filter may be null/blank.
+    public Slice<Event> search(String city, String category, Pageable pageable) {
+        String cityFilter = (city == null || city.isBlank()) ? null : city.trim();
+        String categoryFilter = (category == null || category.isBlank()) ? null : category.trim();
+        if (cityFilter == null && categoryFilter == null) {
+            return findAll(pageable);
+        }
+        return eventRepository.searchAll(cityFilter, categoryFilter, pageable);
+    }
+
     public Event findById(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Event", id));
